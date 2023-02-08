@@ -31,15 +31,20 @@ def wait_for_internet_connection():
         except:
             pass
 
-def start(update: Update, context: CallbackContext):
+# Function for simple testing
+def test(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=CHAT_ID, text='Hello there')
 
+# Function for sending the ip address of the Pi upon request
+# Also invoked upon startup of the Pi
 def ip(update: Update, context: CallbackContext):
     HOSTNAME = subprocess.getoutput('hostname -I').split(" ", 2)[0]
     print('Sending IP...', end='')
     context.bot.send_message(chat_id=CHAT_ID, text=('IP: ' + HOSTNAME))
     print(' Sent!')
 
+# Function for shutting down the Pi after recieving telegram message
+# Same shutdown process as commonly used for GPIO button shutdown
 def shutdown(update: Update, context: CallbackContext):
     print('Shutting down...')
     context.bot.send_message(chat_id=CHAT_ID, text=('Shutting down now...'))
@@ -57,7 +62,7 @@ def main():
     HOSTNAME = subprocess.getoutput('hostname -I').split(" ", 2)[0]
 
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-    
+
     updater = Updater(token=API_ID, use_context=True)
     dispatcher = updater.dispatcher
 
@@ -66,7 +71,7 @@ def main():
     updater.bot.send_message(chat_id=CHAT_ID, text=('Raspberry Pi booted!\nIP: ' + HOSTNAME))
     print(' Sent!')
 
-    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(CommandHandler('test', test))
     dispatcher.add_handler(CommandHandler('ip', ip))
     dispatcher.add_handler(CommandHandler('shutdown',shutdown))
 
