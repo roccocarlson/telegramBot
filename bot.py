@@ -40,6 +40,14 @@ def ip(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=CHAT_ID, text=('IP: ' + HOSTNAME))
     print(' Sent!')
 
+def shutdown(update: Update, context: CallbackContext):
+    print('Shutting down...')
+    context.bot.send_message(chat_id=CHAT_ID, text=('Shutting down now...'))
+    command = "/usr/bin/sudo /sbin/shutdown -h now"
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output = process.communicate()[0]
+    print(output)
+
 def main():
 
     # WAIT UNTIL CONNECTED TO INTERNET - IMPORTANT FOR SYSTEMD
@@ -60,6 +68,7 @@ def main():
 
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(CommandHandler('ip', ip))
+    dispatcher.add_handler(CommandHandler('shutdown',shutdown))
 
     updater.start_polling()
 
